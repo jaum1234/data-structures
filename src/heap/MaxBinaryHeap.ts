@@ -1,34 +1,10 @@
 import { BinaryHeap } from "./BinaryHeap";
 
-class MaxBinaryHeap<T> extends BinaryHeap<T>
+export default class MaxBinaryHeap<T> extends BinaryHeap<T>
 {
     constructor() {
         super();
     }
-
-    // public insert = (data: T): void => {
-    //    this.size++;
-
-    //    this.nodes[this.size] = data;
-
-    //    const newNodeIndex: number = this.size;
-
-    //    this.heapfyUp(newNodeIndex);
-    // }
-
-    // public removeMax = (): T => {
-
-    //     const lastAddedLeaf: T = this.nodes[this.size];
-    //     const maxNode: T = this.nodes[1];
-
-    //     this.nodes[1] = lastAddedLeaf;
-
-    //     this.size--;
-
-    //     this.heapfyDown(1);
-
-    //     return maxNode;
-    // }
 
     protected heapfyUp = (nodeIndex: number): void => {
 
@@ -58,15 +34,12 @@ class MaxBinaryHeap<T> extends BinaryHeap<T>
         let child: T = leftChild;
         let childIndex: number = leftChildIndex;
 
-        let rightChild: T;
-        let rightChildIndex: number;
+        let rightChild: T = this.getRightChild(nodeIndex);
+        let rightChildIndex: number = this.getRightChildIndex(nodeIndex);
 
-        if (this.hasRightChild(nodeIndex)) {
-            rightChildIndex  = this.getRightChildIndex(nodeIndex);
-            rightChild = this.getRightChild(nodeIndex);
-
-            childIndex = rightChild > leftChild ? rightChildIndex : leftChildIndex;
-            child = rightChild > leftChild ? rightChild : leftChild;
+        if (this.hasRightChild(nodeIndex) && rightChild > leftChild) {
+            childIndex = rightChildIndex;
+            child = rightChild;
         }
 
         if (node >  child) {
@@ -78,5 +51,3 @@ class MaxBinaryHeap<T> extends BinaryHeap<T>
         this.heapfyDown(childIndex);
     }
 }
-
-export { MaxBinaryHeap };

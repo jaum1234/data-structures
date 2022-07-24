@@ -1,6 +1,6 @@
 import { BinaryHeap } from "./BinaryHeap";
 
-class MinBinaryHeap<T> extends BinaryHeap<T>
+export default class MinBinaryHeap<T> extends BinaryHeap<T>
 {
     constructor()
     {
@@ -56,7 +56,6 @@ class MinBinaryHeap<T> extends BinaryHeap<T>
     }
 }
 
-export { MinBinaryHeap };
 
 
 

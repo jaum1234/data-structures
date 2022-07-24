@@ -1,4 +1,4 @@
-class BinaryTree<T>
+export default class BinaryTree<T>
 {
     private leftChild: BinaryTree<T> | null | undefined;
     private rightChild: BinaryTree<T> | null | undefined;
@@ -264,5 +264,3 @@ class BinaryTree<T>
         return node?.rightChild === this;
     }
 }
-
-export { BinaryTree };
