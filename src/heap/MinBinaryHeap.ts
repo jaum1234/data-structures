@@ -56,5 +56,7 @@ class MinBinaryHeap<T> extends BinaryHeap<T>
     }
 }
 
+export { MinBinaryHeap };
+
 
 

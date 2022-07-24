@@ -1,5 +1,6 @@
 import { BinaryTree } from './binary_tree';
 import { MaxBinaryHeap } from './heap/MaxBinaryHeap';
+import { MinBinaryHeap } from './heap/MinBinaryHeap';
 
 try {
     
@@ -21,6 +22,25 @@ try {
     maxHeap.removePeak();
 
     maxHeap.print();
+
+    const minHeap: MinBinaryHeap<number> = new MinBinaryHeap();
+
+    minHeap.insert(5);
+    minHeap.insert(4);
+    minHeap.insert(7);
+    minHeap.insert(2);
+    minHeap.insert(3);
+    minHeap.insert(1);
+ 
+    minHeap.print();
+
+    minHeap.removePeak();
+
+    minHeap.print();
+
+    minHeap.removePeak();
+
+    minHeap.print();
     // const root = new BinaryTree<number>(1);
 
     // const leftChild1 = new BinaryTree<number>(2);
