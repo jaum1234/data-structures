@@ -1,6 +1,26 @@
 import { BinaryTree } from './binary_tree';
+import { MaxBinaryHeap } from './heap/MaxBinaryHeap';
 
 try {
+    
+    const maxHeap: MaxBinaryHeap<number> = new MaxBinaryHeap();
+
+    maxHeap.insert(5);
+    maxHeap.insert(4);
+    maxHeap.insert(7);
+    maxHeap.insert(2);
+    maxHeap.insert(3);
+    maxHeap.insert(1);
+ 
+    maxHeap.print();
+
+    maxHeap.removePeak();
+
+    maxHeap.print();
+
+    maxHeap.removePeak();
+
+    maxHeap.print();
     // const root = new BinaryTree<number>(1);
 
     // const leftChild1 = new BinaryTree<number>(2);

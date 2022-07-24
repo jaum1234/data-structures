@@ -187,11 +187,11 @@ class BinaryTree<T>
         parentNode: BinaryTree<T> | null
     ): BinaryTree<T> | null => {
 
-        if (this.data === newRoot) {
+        if (this === initalRoot) {
+            throw new Error("That's already your current root.");
+        }
 
-            if (this === initalRoot) {
-                throw new Error("That's already your current root.");
-            }
+        if (this.data === newRoot) {
 
             const currentNodeLeftChild = this.leftChild;
             const currentNodeRightChild = this.rightChild;

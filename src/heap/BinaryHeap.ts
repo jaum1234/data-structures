@@ -8,19 +8,40 @@ abstract class BinaryHeap<T>
         this.nodes = new Array();
     }
 
-    abstract insert(data: T): void;
+    protected abstract heapfyUp(nodeIndex: number): void;
 
-    abstract remove(data: T): void;
+    protected abstract heapfyDown(nodeIndex: number): void;
 
-    abstract heapfyUp(nodeIndex: number): void;
+    public insert = (data: T): void => {
+        this.size++;
 
-    abstract heapfyDown(nodeIndex: number): void;
+       this.nodes[this.size] = data;
+
+       const newNodeIndex: number = this.size;
+
+       this.heapfyUp(newNodeIndex);
+    }
+
+    public removePeak = (): T => {
+        const lastAddedLeaf: T = this.nodes[this.size];
+        const peak: T = this.nodes[1];
+
+        this.nodes[1] = lastAddedLeaf;
+
+        this.size--;
+
+        this.heapfyDown(1);
+
+        return peak;
+    }
 
     public peak = (): T => {
+        if (this.isEmpty()) throw new Error("Heap is empty");
+
         return this.nodes[1];
     }
 
-    public swap = (firstIndex: number, secondIndex: number): void => {
+    protected swap = (firstIndex: number, secondIndex: number): void => {
         const firstNode: T = this.nodes[firstIndex];
 
         this.nodes[firstIndex] = this.nodes[secondIndex];
@@ -40,37 +61,54 @@ abstract class BinaryHeap<T>
         process.stdout.write(this.nodes[nodeIndex] + ' ');
 
         if (nodeIndex === this.size) {
+            process.stdout.write('\n');
             return;
         }
 
         this.printRecursively(++nodeIndex);
     }
 
-    public getParent = (nodeIndex: number): T => {
-        const parentIndex = nodeIndex/2;
+    protected hasParent = (nodeIndex: number): boolean => {
+        return Math.floor(nodeIndex/2) !== 0;
+    }
+
+    protected getParent = (nodeIndex: number): T => {
+        const parentIndex = Math.floor(nodeIndex/2);
         return this.nodes[parentIndex];
     }
 
-    public getParentIndex = (nodeIndex: number): number => {
-        return nodeIndex/2;
+    protected getParentIndex = (nodeIndex: number): number => {
+        return Math.floor(nodeIndex/2);
     }
 
-    public getLeftChild = (nodeIndex: number): T => {
+    protected getLeftChild = (nodeIndex: number): T => {
         const leftChildIndex = nodeIndex*2;
         return this.nodes[leftChildIndex];
     }
 
-    public getLeftChildIndex = (nodeIndex: number): number => {
+    protected getLeftChildIndex = (nodeIndex: number): number => {
         return nodeIndex*2;
     }
 
-    public getRightChild = (nodeIndex: number): T => {
+    protected getRightChild = (nodeIndex: number): T => {
         const rightChildIndex = nodeIndex*2 + 1;
         return this.nodes[rightChildIndex];
     }
 
-    public getRightChildIndex = (nodeIndex: number): number => {
+    protected getRightChildIndex = (nodeIndex: number): number => {
         return nodeIndex*2 + 1;
+    }
+
+    protected isLeaf = (nodeIndex: number): boolean => {
+        return nodeIndex*2 >= this.size && nodeIndex*2 + 1 > this.size;
+    }
+
+    protected hasLeftChild = (nodeIndex: number): boolean => {
+        return nodeIndex*2  <= this.size; 
+    }
+
+    protected hasRightChild = (nodeIndex: number): boolean => {
+        return nodeIndex*2 + 1 <= this.size;
     }
 }
 
