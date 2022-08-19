@@ -11,6 +11,18 @@ export default class BinaryTree<T>
         this.data = data;
     }
 
+    public getData = (): T => {
+        return this.data;
+    }
+
+    public getLeftChild = (): BinaryTree<T> | null | undefined => {
+        return this.leftChild;
+    }
+
+    public getRightChild = (): BinaryTree<T> | null | undefined => {
+        return this.rightChild;
+    }
+
     public appendLeftChild = (node: BinaryTree<T>): void => {
         this.leftChild = node;
     }
@@ -67,10 +79,10 @@ export default class BinaryTree<T>
     }
 
     public delete = (data: T): BinaryTree<T> | null => {
-        return this.deleteNode(data, null);
+        return this.deleteRecursively(data, null);
     }
 
-    private deleteNode = (data: T, parentNode: BinaryTree<T> | null): BinaryTree<T> | null => {
+    private deleteRecursively = (data: T, parentNode: BinaryTree<T> | null): BinaryTree<T> | null => {
 
         if (this.data === data) {
 
@@ -81,22 +93,22 @@ export default class BinaryTree<T>
                     parentNode!.rightChild = null;
                 }
 
-                return this;
-            } 
-
-            const removedLeaf = this.removeFirstLeafFound();
-            removedLeaf!.leftChild = this.leftChild;
-            removedLeaf!.rightChild = this.rightChild;
-
-            if (parentNode) {
-                if (this.isLeftChildOf(parentNode)) {
-                    parentNode.leftChild = removedLeaf;
-                } else {
-                    parentNode.rightChild = removedLeaf;
+            } else {
+                const removedLeaf = this.removeFirstLeafFound();
+                removedLeaf!.leftChild = this.leftChild;
+                removedLeaf!.rightChild = this.rightChild;
+    
+                if (parentNode) {
+                    if (this.isLeftChildOf(parentNode)) {
+                        parentNode.leftChild = removedLeaf;
+                    } else {
+                        parentNode.rightChild = removedLeaf;
+                    }
                 }
-            }
-            this.rightChild = null
-            this.leftChild = null;
+
+                this.rightChild = null
+                this.leftChild = null;
+            }  
             
             return this;
         }
@@ -104,14 +116,12 @@ export default class BinaryTree<T>
         let removedNode: BinaryTree<T> | null | undefined;
 
         if (this.hasLeftChild()) {
-            removedNode = this.leftChild?.deleteNode(data, this);
-
+            removedNode = this.leftChild?.deleteRecursively(data, this);
             if (removedNode) return removedNode;
         }
 
         if (this.hasRightChild()) {
-            removedNode = this.rightChild?.deleteNode(data, this);
-
+            removedNode = this.rightChild?.deleteRecursively(data, this);
             if (removedNode) return removedNode;
         }
 
@@ -119,10 +129,10 @@ export default class BinaryTree<T>
     }
 
     public removeFirstLeafFound = (): BinaryTree<T> | null=> {
-        return this.removeFirstLeaf(null);
+        return this.removeFirstLeafFoundRecursively(null);
     }
 
-    private removeFirstLeaf = (parentNode: BinaryTree<T> | null): BinaryTree<T> | null => {
+    private removeFirstLeafFoundRecursively = (parentNode: BinaryTree<T> | null): BinaryTree<T> | null => {
         let removedLeaf: BinaryTree<T> | null | undefined;
 
         if (this.isLeaf() && parentNode) {
@@ -137,13 +147,13 @@ export default class BinaryTree<T>
         }
 
         if (this.hasLeftChild()) {
-            removedLeaf = this.leftChild?.removeFirstLeaf(this);
+            removedLeaf = this.leftChild?.removeFirstLeafFoundRecursively(this);
 
             if (removedLeaf) return removedLeaf;
         }
 
         if (this.hasRightChild()) {
-            removedLeaf = this.rightChild?.removeFirstLeaf(this);
+            removedLeaf = this.rightChild?.removeFirstLeafFoundRecursively(this);
             
             if (removedLeaf) return removedLeaf;
         }
@@ -160,65 +170,56 @@ export default class BinaryTree<T>
 
         if (this.hasLeftChild()) {
             node = this.leftChild?.search(data);
-
-            if (node !== null) {
-                return node;
-            }
+            if (node) return node;
         }
 
         if (this.hasRightChild()) {
             node = this.rightChild?.search(data);
-
-            if (node !== null) {
-                return node;
-            }
+            if (node) return node;
         }
 
         return null;
     }
 
     public changeRoot = (newRoot: T): void => {
-        this.changeRootTo(newRoot, this, null);
+
+        if (this.data == newRoot) {
+            throw new Error("That's already your current root.");
+        }
+
+        this.changeRootRecursively(newRoot, this, null);
     }
 
-    private changeRootTo = (
+    private changeRootRecursively = (
         newRoot: T, 
         initalRoot: BinaryTree<T>,
         parentNode: BinaryTree<T> | null
     ): BinaryTree<T> | null => {
-
-        if (this === initalRoot) {
-            throw new Error("That's already your current root.");
-        }
 
         if (this.data === newRoot) {
 
             const currentNodeLeftChild = this.leftChild;
             const currentNodeRightChild = this.rightChild;
 
-            if (!this.isLeftChildOf(initalRoot) && !this.isRightChildOf(initalRoot)) {
+            if (this.isLeftChildOf(initalRoot)) {
 
-                this.leftChild = initalRoot.leftChild;
+                this.leftChild = initalRoot;
                 this.rightChild = initalRoot.rightChild;
 
-                initalRoot.leftChild = currentNodeLeftChild;
-                initalRoot.rightChild = currentNodeRightChild;
+            } else if (this.isRightChildOf(initalRoot)) {
+
+                this.rightChild = initalRoot;
+                this.leftChild = initalRoot.leftChild;
+
+            } else {
+                this.leftChild = initalRoot.leftChild;
+                this.rightChild = initalRoot.rightChild;
 
                 if (this.isLeftChildOf(parentNode)) {
                     parentNode!.leftChild = initalRoot;
                 } else {
                     parentNode!.rightChild = initalRoot;
                 }
-
-                return this;
-            }
-
-            if (this.isLeftChildOf(initalRoot)) {
-                this.leftChild = initalRoot;
-                this.rightChild = initalRoot.rightChild;
-            } else {
-                this.rightChild = initalRoot;
-                this.leftChild = initalRoot.leftChild;
             }
 
             initalRoot.leftChild = currentNodeLeftChild;
@@ -230,14 +231,12 @@ export default class BinaryTree<T>
         let node: BinaryTree<T> | null | undefined;
 
         if (this.hasLeftChild()) {
-            node = this.leftChild?.changeRootTo(newRoot, initalRoot, this);
-
+            node = this.leftChild?.changeRootRecursively(newRoot, initalRoot, this);
             if (node) return node;
         }
 
         if (this.hasRightChild()) {
-            node = this.rightChild?.changeRootTo(newRoot, initalRoot, this);
-
+            node = this.rightChild?.changeRootRecursively(newRoot, initalRoot, this);
             if (node) return node;
         }
 

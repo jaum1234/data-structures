@@ -1,4 +1,6 @@
+import BinaryTree from "../binary_tree/BinaryTree";
 import { BinaryHeap } from "./BinaryHeap";
+import MinBinaryHeap from "./MinBinaryHeap";
 
 export default class MaxBinaryHeap<T> extends BinaryHeap<T>
 {
@@ -6,12 +8,28 @@ export default class MaxBinaryHeap<T> extends BinaryHeap<T>
         super();
     }
 
+    public convertToMaxHeap = (minHeap: MinBinaryHeap<T>): MaxBinaryHeap<T> => {
+        if (minHeap.isEmpty()) {
+            return this;
+        }
+
+        const minHeapNodes: Array<T> = minHeap.getNodes();
+        const minHeapSize: number = minHeap.getSize();
+
+        const data: T = minHeapNodes[minHeapSize];
+        minHeap.setSize(minHeapSize - 1);
+
+        this.insert(data);
+
+        return this.convertToMaxHeap(minHeap);
+    }
+
     protected heapfyUp = (nodeIndex: number): void => {
 
         const node: T = this.nodes[nodeIndex];
         const parent: T = this.getParent(nodeIndex);
 
-        if (!this.hasParent(nodeIndex) || node < parent) {
+        if (!this.hasParent(nodeIndex) || node <= parent) {
             return;
         }
 
@@ -24,30 +42,27 @@ export default class MaxBinaryHeap<T> extends BinaryHeap<T>
     protected heapfyDown = (nodeIndex: number): void => {
         const node: T = this.nodes[nodeIndex];
 
-        if (this.isLeaf(nodeIndex)) {
+        if (!this.hasLeftChild(nodeIndex)) {
             return;
         }
 
         const leftChild: T = this.getLeftChild(nodeIndex);
         const leftChildIndex: number = this.getLeftChildIndex(nodeIndex);
 
-        let child: T = leftChild;
-        let childIndex: number = leftChildIndex;
+        let higherChild: T = leftChild;
+        let higherChildIndex: number = leftChildIndex;
 
-        let rightChild: T = this.getRightChild(nodeIndex);
-        let rightChildIndex: number = this.getRightChildIndex(nodeIndex);
-
-        if (this.hasRightChild(nodeIndex) && rightChild > leftChild) {
-            childIndex = rightChildIndex;
-            child = rightChild;
+        if (this.hasRightChild(nodeIndex) && this.getRightChild(nodeIndex) > leftChild) {
+            higherChildIndex = this.getRightChildIndex(nodeIndex);
+            higherChild = this.getRightChild(nodeIndex);
         }
 
-        if (node >  child) {
+        if (node > higherChild) {
             return;
         }
 
-        this.swap(nodeIndex, childIndex);
+        this.swap(nodeIndex, higherChildIndex);
 
-        this.heapfyDown(childIndex);
+        this.heapfyDown(higherChildIndex);
     }
 }
